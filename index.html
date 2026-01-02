@@ -131,11 +131,6 @@ h1{font-size:26px;font-weight:700;color:#fff;margin-bottom:6px;}
     50%{transform:scale(1.08);}
     100%{transform:scale(1);}
 }
-.telegram-btn:disabled{
-    animation:none;
-    opacity:0.7;
-    cursor:not-allowed;
-}
 .telegram-btn i{font-size:20px;}
 
 /* RATING */
@@ -163,16 +158,11 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 
 fbq('init', '903523175468124');
 fbq('track', 'PageView');
-
-// FIXED: Track subscribe ONLY ONCE per unique user across sessions
-let hasTrackedSubscribe = localStorage.getItem('telegram_subscribe_tracked') === 'true';
-
 </script>
 <noscript>
   <img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=903523175468124&ev=PageView&noscript=1"
 /></noscript>
-<!-- ================= END META PIXEL ================= -->
 
 </head>
 <body>
@@ -206,6 +196,7 @@ for(let i=0;i<35;i++){
         <div class="feature"><i class="fa-solid fa-gem"></i> No Tips • Only Strategy</div>
     </div>
 
+    <!-- ================= PERFECT BUTTON: Unlimited Clicks + 1 Meta Event ================= -->
     <button class="telegram-btn" id="telegramBtn">
         <i class="fa-brands fa-telegram"></i>
         JOIN PREMIUM TELEGRAM
@@ -226,43 +217,22 @@ for(let i=0;i<35;i++){
 
 </div>
 
-<!-- ================= FIXED SUBSCRIBE TRACKING (1 CLICK = 1 TRACK FOREVER) ================= -->
+<!-- ================= FINAL PERFECT TRACKING SCRIPT ================= -->
 <script>
 const telegramBtn = document.getElementById("telegramBtn");
-const fbq = window.fbq;
 
-// Check both session & localStorage - disable button if already joined in session
-if(sessionStorage.getItem("telegram_subscribed") === "yes"){
-    telegramBtn.disabled = true;
-}
-
+// Customer link को जितनी बार भी दबाएंगे - Telegram खुलेगा हर बार
 telegramBtn.addEventListener("click", function(){
-    // Skip if already tracked/subscribed
-    if(hasTrackedSubscribe || sessionStorage.getItem("telegram_subscribed") === "yes") {
-        return;
+    // Meta में सिर्फ 1 बार Subscribe event (campaign के लिए perfect)
+    if(localStorage.getItem('subscribed') !== 'true' && window.fbq) {
+        fbq('track', 'Subscribe');  // सिर्फ ये 1 event
+        localStorage.setItem('subscribed', 'true');
     }
-
-    // Mark as subscribed in session (prevents multiple clicks in same session)
-    sessionStorage.setItem("telegram_subscribed", "yes");
-    telegramBtn.disabled = true;
-
-    // TRACK META EVENTS ONLY ONCE PER USER (using localStorage)
-    if (!hasTrackedSubscribe) {
-        fbq('track', 'Subscribe');                    // Standard Event
-        fbq('trackCustom', 'TelegramSubscribe');      // Custom Event
-        
-        // Mark as tracked PERMANENTLY in localStorage
-        localStorage.setItem('telegram_subscribe_tracked', 'true');
-        hasTrackedSubscribe = true;
-    }
-
-    // Redirect after short delay
-    setTimeout(() => {
-        window.location.href = "https://t.me/+kV_Rlq94pPhiYWZl";
-    }, 250);
+    
+    // हर click पर Telegram redirect (unlimited allowed)
+    window.location.href = "https://t.me/+kV_Rlq94pPhiYWZl";
 });
 </script>
-<!-- ================= END ================= -->
 
 </body>
 </html>
